@@ -10,6 +10,7 @@ from discord.ext import commands
 import logging
 import traceback
 import util
+import os
 
 async def run(bot):
     try:
