@@ -23,7 +23,7 @@ async def run(bot):
 class AmputatorBot(commands.Bot):
     def __init__(self):
         super().__init__(
-        command_prefix="!",
+        command_prefix="amp!",
         case_insensitive=True,
         description="Protecting the Open Web!")
 
