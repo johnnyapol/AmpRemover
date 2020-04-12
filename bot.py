@@ -37,12 +37,13 @@ class AmputatorBot(commands.Bot):
 
             for url in non_amp:
                 for x in url:
-                    if (len(x) == 0):
+                    if (len(x) == 0 or x == "Couldn't find any canonical links"):
                         continue
                     msg_text = msg_text + "\n" + x 
             if (len(msg_text) != base_len):
                 await message.channel.send(msg_text)
         await super().on_message(message)
+
     async def on_command_error(self, context, exception):
         await context.send(exception)
         return super().on_command_error(context, exception)
