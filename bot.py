@@ -37,7 +37,7 @@ class AmputatorBot(commands.Bot):
 
             for url in non_amp:
                 for x in url:
-                    if (len(x) == 0 or x == "Couldn't find any canonical links"):
+                    if (len(x) == 0):
                         continue
                     msg_text = msg_text + "\n" + x 
             if (len(msg_text) != base_len):

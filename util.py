@@ -253,6 +253,6 @@ def get_canonicals(amp_urls, use_markdown):
             logging.debug("No canonical URLs were found, skipping this one")
 
     if len(canonical_urls_clean) == 1:
-        return canonical_urls_clean, warning_log
+        return canonical_urls_clean
 
-    return canonical_urls, warning_log
+    return canonical_urls
