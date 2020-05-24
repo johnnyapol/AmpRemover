@@ -38,7 +38,7 @@ class AmputatorBot(commands.Bot):
             for url in non_amp:
                 if len(url) == 0:
                     continue
-                msg_text = msg_text + "\n" + x 
+                msg_text = msg_text + "\n" + url
             if (len(msg_text) != base_len):
                 await message.channel.send(msg_text)
         await super().on_message(message)
