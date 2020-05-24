@@ -38,13 +38,9 @@ class AmputatorBot(commands.Bot):
             for url in non_amp:
                 if len(url) == 0:
                     continue
-                msg_text = msg_text + "\n" + url
+                msg_text = f"{msg_text}\n <{url}>"
+
             if (len(msg_text) != base_len):
                 await message.channel.send(msg_text)
-        await super().on_message(message)
-
-    async def on_command_error(self, context, exception):
-        await context.send(exception)
-        return super().on_command_error(context, exception)
 
 asyncio.get_event_loop().run_until_complete(run(AmputatorBot()))
