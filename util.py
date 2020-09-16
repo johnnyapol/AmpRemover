@@ -56,18 +56,6 @@ def check_if_amp(string):
     # If no AMP link was found in the string, return False
     return False
 
-
-def check_if_google(string):
-    string = string.lower()  # Make string lowercase
-
-    # If the string contains an Google AMP link, return True
-    if "www.google." in string or "ampproject.net" in string or "ampproject.org" in string:
-        return True
-
-    # If no Google AMP link was found in the string, return False
-    return False
-
-
 def remove_markdown(url):
     # Isolate the actual URL (remove markdown) (part 1)
     try:

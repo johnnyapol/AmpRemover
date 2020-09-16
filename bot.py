@@ -12,6 +12,8 @@ import traceback
 import util
 import os
 
+import apple_news
+
 async def run(bot):
     try:
         await bot.start(os.getenv('DISCORD_BOT_TOKEN'))
@@ -28,19 +30,24 @@ class AmputatorBot(commands.Bot):
         description="Protecting the Open Web!")
 
     async def on_message(self, message):
+        non_amp = None
         if util.check_if_amp(message.content):
             urls = util.get_amp_urls(message.content)
             non_amp = util.get_canonicals(urls, False)
+        elif apple_news.check_if_apple(message.content):
+            non_amp = apple_news.get_urls(message.content)
+        else:
+            return
 
-            msg_text = "Non-AMP Urls:"
-            base_len = len(msg_text)
+        msg_text = "Non-AMP Urls:"
+        base_len = len(msg_text)
 
-            for url in non_amp:
-                if len(url) == 0:
-                    continue
-                msg_text = f"{msg_text}\n <{url}>"
+        for url in non_amp:
+            if len(url) == 0:
+                continue
+            msg_text = f"{msg_text}\n <{url}>"
 
-            if (len(msg_text) != base_len):
-                await message.channel.send(msg_text)
+        if (len(msg_text) != base_len):
+            await message.channel.send(msg_text)
 
 asyncio.get_event_loop().run_until_complete(run(AmputatorBot()))
