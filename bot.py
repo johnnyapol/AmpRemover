@@ -34,7 +34,7 @@ class AmputatorBot(commands.Bot):
         if util.check_if_amp(message.content):
             urls = util.get_amp_urls(message.content)
             non_amp = util.get_canonicals(urls, False)
-        elif apple_news.check_if_apple(message.content):
+        elif apple_news.check_if_appl(message.content):
             non_amp = apple_news.get_urls(message.content)
         else:
             return
