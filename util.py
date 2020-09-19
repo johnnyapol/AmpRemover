@@ -22,11 +22,13 @@ from random import choice
 import requests
 from bs4 import BeautifulSoup
 
-warning_log = ['']
+warning_log = [""]
 
 # https://github.com/KilledMufasa/AmputatorBot/blob/master/config.py
-headers = ['Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3202.84 Mobile Safari/537.36',
-           'Mozilla/5.0 (Linux; Android 9; CLT-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3945.116 Mobile Safari/537.36']
+headers = [
+    "Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3202.84 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 9; CLT-L29) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3945.116 Mobile Safari/537.36",
+]
 
 
 def send_warning(warning):
@@ -38,9 +40,9 @@ def send_warning(warning):
 # This is done to prevent 403 errors.
 def random_headers():
     return {
-        'User-Agent': choice(headers),
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US'
+        "User-Agent": choice(headers),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US",
     }
 
 
@@ -48,40 +50,53 @@ def check_if_amp(string):
     string = string.lower()  # Make string lowercase
 
     # If the string contains an AMP link, return True
-    if "/amp" in string or "amp/" in string or ".amp" in string or "amp." in string or "?amp" in string \
-            or "amp?" in string or "=amp" in string or "amp=" in string or "&amp" in string or "amp&" in string \
-            and "https://" in string:
+    if (
+        "/amp" in string
+        or "amp/" in string
+        or ".amp" in string
+        or "amp." in string
+        or "?amp" in string
+        or "amp?" in string
+        or "=amp" in string
+        or "amp=" in string
+        or "&amp" in string
+        or "amp&" in string
+        and "https://" in string
+    ):
         return True
 
     # If no AMP link was found in the string, return False
     return False
 
+
 def remove_markdown(url):
     # Isolate the actual URL (remove markdown) (part 1)
     try:
-        url = url.split('](')[-1]
-        logging.debug(
-            "{} was stripped of this string: ']('".format(url))
+        url = url.split("](")[-1]
+        logging.debug("{} was stripped of this string: ']('".format(url))
 
     except:
         logging.error(traceback.format_exc())
         logging.debug(
-            "{} couldn't or didn't have to be stripped of this string: ']('.".format(url))
+            "{} couldn't or didn't have to be stripped of this string: ']('.".format(
+                url
+            )
+        )
 
     # Isolate the actual URL (remove markdown) (part 2)
-    if url.endswith(')?'):
+    if url.endswith(")?"):
         url = url[:-2]
         logging.debug("{} was stripped of this string: ')?'".format(url))
 
-    if url.endswith('),'):
+    if url.endswith("),"):
         url = url[:-2]
         logging.debug("{} was stripped of this string: ')'".format(url))
 
-    if url.endswith(').'):
+    if url.endswith(")."):
         url = url[:-2]
         logging.debug("{} was stripped of this string: ')'".format(url))
 
-    if url.endswith(')'):
+    if url.endswith(")"):
         url = url[:-1]
         logging.debug("{} was stripped of this string: ')'".format(url))
 
@@ -107,9 +122,13 @@ def get_canonical(og_url, depth):
             return found_canonical_link
 
         if not found_canonical_link:
-            found_canonical_link_alt, is_solved_alt = get_canonical_with_canurl(soup, og_url)
+            found_canonical_link_alt, is_solved_alt = get_canonical_with_canurl(
+                soup, og_url
+            )
             if is_solved_alt:
-                logging.info("SUCCESS: Found canonical with canurl: " + found_canonical_link)
+                logging.info(
+                    "SUCCESS: Found canonical with canurl: " + found_canonical_link
+                )
                 return found_canonical_link_alt
 
             if found_canonical_link_alt:
@@ -134,11 +153,11 @@ def get_canonical(og_url, depth):
 def get_canonical_with_rel(soup, url):
     # Get all canonical links in a list using rel
     try:
-        canonical_links = soup.find_all(rel='canonical')
+        canonical_links = soup.find_all(rel="canonical")
         if canonical_links:
             for link in canonical_links:
                 # Get the direct link
-                found_canonical_url = link.get('href')
+                found_canonical_url = link.get("href")
                 # If the canonical url is the submitted url, don't use it
                 if found_canonical_url == url:
                     send_warning("Encountered a false positive")
@@ -158,11 +177,11 @@ def get_canonical_with_rel(soup, url):
 def get_canonical_with_canurl(soup, url):
     # Get all canonical links in a list using rel
     try:
-        canonical_links = soup.find_all(a='amp-canurl')
+        canonical_links = soup.find_all(a="amp-canurl")
         if canonical_links:
             for a in canonical_links:
                 # Get the direct link
-                found_canonical_url = a.get('href')
+                found_canonical_url = a.get("href")
                 # If the canonical url is the submitted url, don't use it
                 if found_canonical_url == url:
                     send_warning("Encountered a false positive")
@@ -192,8 +211,11 @@ def get_soup(url):
     # If the submitted page couldn't be fetched, throw an exception
     except:
         logging.error(traceback.format_exc())
-        send_warning("the page could not be fetched (the website is probably blocking bots or geo-blocking)")
+        send_warning(
+            "the page could not be fetched (the website is probably blocking bots or geo-blocking)"
+        )
         return None
+
 
 def get_amp_urls(item_body):
     # Scan the item body for the links
@@ -229,12 +251,20 @@ def get_canonicals(amp_urls, use_markdown):
                 # Calculate which number to prefix
                 canonical_urls_amount = len(canonical_urls) + 1
                 # Make a string out of the prefix and the canonical url
-                canonical_url_markdown = "[" + str(
-                    canonical_urls_amount) + "] **[" + canonical_url + "](" + canonical_url + ")**"
+                canonical_url_markdown = (
+                    "["
+                    + str(canonical_urls_amount)
+                    + "] **["
+                    + canonical_url
+                    + "]("
+                    + canonical_url
+                    + ")**"
+                )
                 # And append this to the list
                 canonical_urls.append(canonical_url_markdown)
-                logging.debug("The array of canonical urls is now: {}".format(
-                    canonical_urls))
+                logging.debug(
+                    "The array of canonical urls is now: {}".format(canonical_urls)
+                )
             else:
                 canonical_urls.append(canonical_url)
         else:
